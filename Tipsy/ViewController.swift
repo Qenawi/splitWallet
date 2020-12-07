@@ -19,11 +19,18 @@ class ViewController: UIViewController {
     @IBOutlet weak var steeperLapel: UILabel!
     @IBOutlet weak var stepper: UIStepper!
     var amount:Double = 0.0
+    var amountAfter = 0.0
+    var tipprecent = 0
+    var tipValue = 0.0
+    
+ 
+
     @IBAction func steeper(_ sender: UIStepper)
     {
-        steeperLapel.text = String(sender.value)
+        steeperLapel.text = String(format: "%.0f",sender.value)
     }
     @IBAction func navigate(_ sender: UIButton) {
+        self.caclulate()
         self.performSegue(withIdentifier: nav, sender: self)
     }
     @IBAction func onAction(_ sender: UIButton)
@@ -32,8 +39,6 @@ class ViewController: UIViewController {
             zeroBtn.isSelected = true
             tenBtn.isSelected = false
             twenty.isSelected = false
-
-            
         }
         else if sender.tag == 10 {
                        zeroBtn.isSelected = false
@@ -45,7 +50,8 @@ class ViewController: UIViewController {
                        tenBtn.isSelected = false
                        twenty.isSelected = true
         }
-        self.caclulate()
+        self.tipprecent = sender.tag
+        
     }
     @IBOutlet weak var textValue: UITextField!
     override func viewDidLoad() {
@@ -53,13 +59,17 @@ class ViewController: UIViewController {
     }
     func caclulate()
     {
-        amount = Double(valueText.text ?? "0.0") ?? 0.0
+        self.amount =  Double(self.valueText.text ?? "0.0") ?? 0.0
+        self.tipValue  = Double(self.tipprecent) * self.amount
+        self.tipValue /= 100.0
+        self.amountAfter = self.amount - self.tipValue
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         if segue.identifier == nav {
            let ee = (segue.destination as! DetailsControler)
-            ee.amountVal = amount
+            ee.amountVal = (self.amountAfter/self.stepper.value)
+            ee.msg = "amount is going to be \(self.valueText.text) and will be splitted on \(Int(self.stepper.value)) and each one is going to pay \(ee.amountVal)"
         }
     }
 
